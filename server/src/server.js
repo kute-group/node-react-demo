@@ -2,6 +2,7 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import mongoose from 'mongoose';
+import session from 'express-session';
 
 // import internal
 const { PORT, DB } = require('../config.json');
@@ -22,7 +23,11 @@ mongoose.connection.on('connected', () =>
 // middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use;
+app.use(session({
+	secret: 'work hard',
+	resave: true, 
+	saveUninitialized: false
+}));
 
 // routers
 app.use('/api/v1', routers);
