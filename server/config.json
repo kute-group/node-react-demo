@@ -1,5 +1,0 @@
-{
-  "PORT": 3000,
-  "ENV": "dev",
-  "DB": "mongodb://hoplb:hophop01@ds157624.mlab.com:57624/todo-api-hoplb"
-}
