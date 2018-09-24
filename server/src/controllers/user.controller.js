@@ -1,14 +1,10 @@
 import { Router } from 'express';
 import User from '../models/user.model';
+const auth = require('../helpers/auth');
 
 const api = Router();
-api.get('/me', (req, res) => {
-  if (!req.auth) {
-    return res.status(401).send({
-      message: ' not login'
-    });
-  }
-  User.findById(req.auth.id)
+api.get('/me', auth.required, (req, res) => {
+  User.findById(req.user._id)
     .then(user => {
       return res.json(user);
     })
@@ -18,21 +14,14 @@ api.get('/me', (req, res) => {
       });
     });
 });
-api.get('/', (req, res) => {
-  User.find({}, (err, users) => {
-    if (err) {
-      res.send(err);
-    }
-    res.json(users);
-    console.log('requested');
-  });
-  console.log('requested');
+api.get('/', auth.optional, (req, res) => {
+  res.send({ hello: 'true' });
 });
 api.post('/create', (req, res, next) => {
-	// confirm that user typed same password twice
-	if(req.body.password !== req.body.passwordConf){
-		return res.status(500).send('Password do not match.');
-	}
+  // confirm that user typed same password twice
+  if (req.body.password !== req.body.passwordConf) {
+    return res.status(500).send('Password do not match.');
+  }
   if (
     req.body.username &&
     req.body.email &&
