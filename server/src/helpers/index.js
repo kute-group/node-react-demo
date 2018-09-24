@@ -1,7 +1,9 @@
 import common from './common';
+import db from './db';
 import errorHandle from './error-handling';
 
 export default {
-	common,
-	errorHandle
-}
+  db,
+  common,
+  errorHandle
+};
