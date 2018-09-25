@@ -1,8 +1,8 @@
 {
   "PORT": 3000,
   "ENV": "dev",
-	"DB": "mongodb://username:password@ds157624.mlab.com:57624/todo-api-hoplb",
-	"JWT_ENCRIPTION": "JWT_ENCRIPTION",
-	"PAGE_LIMIT": 30,
+  "DB": "mongodb://username:password@ds157624.mlab.com:57624/todo-api-hoplb",
+  "JWT_ENCRIPTION": "JWT_ENCRIPTION",
+  "PAGE_LIMIT": 30,
   "JWT_EXPIRATATION": 10000
 }

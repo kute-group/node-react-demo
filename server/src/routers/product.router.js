@@ -1,7 +1,8 @@
 import express from 'express';
-const router = express.Router();
 
 import product_controller from '../controllers/product.controller';
+
+const router = express.Router();
 
 router.use(product_controller);
 

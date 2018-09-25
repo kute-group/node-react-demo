@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import passport from 'passport';
-const jwt = require('jsonwebtoken');
 import User from '../models/user.model';
+
+// const jwt = require('jsonwebtoken');
 const auth = require('../helpers/auth');
+
 const api = Router();
 // var LocalStrategy = require('passport-local').Strategy;
 // passport.use(
@@ -70,7 +72,7 @@ api.post('/login', auth.optional, (req, res, next) => {
         }
 
         return res.status(400).send(info);
-      }
+      },
     )(req, res, next);
 
     // User.findOne({ email: req.body.email }).then(user => {
@@ -100,12 +102,11 @@ api.post('/login', auth.optional, (req, res, next) => {
 
     //   }
     // });
-  } else {
-    res
-      .status(400)
-      .send('Email and password are required.')
-      .end();
   }
+  res
+    .status(400)
+    .send('Email and password are required.')
+    .end();
 });
 api.post('/register', (req, res, next) => {
   // confirm that user typed same password twice
@@ -113,25 +114,26 @@ api.post('/register', (req, res, next) => {
     return res.status(500).send('Password do not match.');
   }
   if (
-    req.body.username &&
-    req.body.email &&
-    req.body.password &&
-    req.body.passwordConf
+    req.body.username
+    && req.body.email
+    && req.body.password
+    && req.body.passwordConf
   ) {
     const userData = {
       email: req.body.email,
       username: req.body.username,
       password: req.body.password,
-      passwordConf: req.body.passwordConf
+      passwordConf: req.body.passwordConf,
     };
     const user = new User(userData);
-    user.save((err, user) => {
-      if (err) return next(err);
-      res.status(200).send(user);
+    user.save((err, u) => {
+      if (err) return next(u);
+      return res.status(200).send(u);
     });
   } else {
     res.status(500).send('Can not save data');
   }
+  return false;
 });
 
 module.exports = api;

@@ -5,5 +5,5 @@ import errorHandle from './error-handling';
 export default {
   db,
   common,
-  errorHandle
+  errorHandle,
 };

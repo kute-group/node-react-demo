@@ -1,20 +1,19 @@
 import { Router } from 'express';
 import User from '../models/user.model';
-const auth = require('../helpers/auth');
 import helpers from '../helpers';
 import { PAGE_LIMIT } from '../../config.json';
+
+const auth = require('../helpers/auth');
 
 const api = Router();
 api.get('/me', auth.required, (req, res) => {
   User.findById(req.user._id)
-    .then(user => {
-      return res.json(user);
-    })
-    .catch(err => {
-      return res.status(400).send({
-        message: getErrorMessage(err)
-      });
-    });
+    .then(user => res.json(user))
+    .catch(err =>
+      res.status(400).send({
+        message: err,
+      }),
+    );
 });
 
 // get users list
@@ -23,7 +22,7 @@ api.get('/', async (req, res) => {
   const options = {
     limit: limit || PAGE_LIMIT,
     page: page || 0,
-    criteria: {}
+    criteria: {},
   };
   let users = await User.list(options);
   users = users.map(user => User.format(user));
@@ -33,8 +32,8 @@ api.get('/', async (req, res) => {
       limit: options.limit,
       page: options.page,
       count,
-      list: users
-    })
+      list: users,
+    }),
   );
 });
 api.post('/', (req, res, next) => {
@@ -52,17 +51,17 @@ api.post('/', (req, res, next) => {
       email: req.body.email,
       username: req.body.username,
       password: req.body.password,
-			fullname: req.body.fullname || '',
-			birthday: req.body.birthday || ''
+      fullname: req.body.fullname || '',
+      birthday: req.body.birthday || '',
     };
     const user = new User(userData);
     user.save((err, user) => {
       if (err) return next(err);
       res.status(200).send({
-				user,
-				status: 'success',
-				message: 'Add new user successfully.'
-			});
+        user,
+        status: 'success',
+        message: 'Add new user successfully.',
+      });
     });
   } else {
     res.status(500).send('Can not save data');
