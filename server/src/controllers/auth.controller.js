@@ -1,26 +1,26 @@
-import { Router } from 'express';
-import jsonwebtoken from 'jsonwebtoken';
-import User from '../models/user.model';
-import helpers from '../helpers';
-const auth = require('../helpers/auth');
-const { SECRET, JWT_EXPIRATATION } = require('../../config.json');
+import { Router } from "express";
+import jsonwebtoken from "jsonwebtoken";
+import User from "../models/user.model";
+import helpers from "../helpers";
+const auth = require("../helpers/auth");
+const { SECRET, JWT_EXPIRATATION } = require("../../config.json");
 
 const api = Router();
-api.get('/logout', auth.optional, (req, res) => {
+api.get("/logout", auth.optional, (req, res) => {
   req.logout();
   res.send(null);
 });
 
-api.post('/login', auth.optional, (req, res, next) => {
+api.post("/login", auth.optional, (req, res, next) => {
   if (req.body.email && req.body.password) {
-    helpers.common.log('start to log in...', 'green');
+    helpers.common.log("start to log in...", "green");
     User.findOne({ email: req.body.email })
       .then(user => {
         if (!user) {
           res
             .status(400)
             .send({
-              message: 'Can not find user to login',
+              message: "Can not find user to login"
             })
             .end();
         } else {
@@ -28,34 +28,34 @@ api.post('/login', auth.optional, (req, res, next) => {
             if (result) {
               helpers.common.log(
                 `login with email: ${req.body.email}`,
-                'green',
+                "green"
               );
               jsonwebtoken.sign(
                 { email: user.email, id: user._id, username: user.username },
                 SECRET,
                 {
-                  algorithm: 'HS256',
-                  expiresIn: JWT_EXPIRATATION,
+                  algorithm: "HS256",
+                  expiresIn: JWT_EXPIRATATION
                 },
                 (err, token) => {
                   if (err)
                     return res
                       .status(400)
                       .send({
-                        err,
+                        err
                       })
                       .end();
                   return res.status(200).send({
                     user,
-                    token,
+                    token
                   });
-                },
+                }
               );
             } else {
               res
                 .status(400)
                 .send({
-                  message: 'Password is not correct.',
+                  message: "Password is not correct."
                 })
                 .end();
             }
@@ -66,7 +66,7 @@ api.post('/login', auth.optional, (req, res, next) => {
         res
           .status(400)
           .send({
-            message: 'Can not find user to login.',
+            message: "Can not find user to login."
           })
           .end();
       });
@@ -74,15 +74,15 @@ api.post('/login', auth.optional, (req, res, next) => {
     res
       .status(400)
       .send({
-        message: 'Email and password are required.',
+        message: "Email and password are required."
       })
       .end();
   }
 });
-api.post('/register', auth.optional, (req, res, next) => {
+api.post("/register", auth.optional, (req, res, next) => {
   // confirm that user typed same password twice
   if (req.body.password !== req.body.passwordConf) {
-    return res.status(500).send('Password do not match.');
+    return res.status(500).send("Password do not match.");
   }
   if (
     req.body.username &&
@@ -94,7 +94,7 @@ api.post('/register', auth.optional, (req, res, next) => {
       email: req.body.email,
       username: req.body.username,
       password: req.body.password,
-      passwordConf: req.body.passwordConf,
+      passwordConf: req.body.passwordConf
     };
     const user = new User(userData);
     user.save((err, u) => {
@@ -102,7 +102,7 @@ api.post('/register', auth.optional, (req, res, next) => {
       return res.status(200).send(u);
     });
   } else {
-    res.status(500).send('Can not save data');
+    res.status(500).send("Can not save data");
   }
   return false;
 });

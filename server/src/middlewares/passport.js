@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
-import helpers from '../helpers';
+import helpers from "../helpers";
 
 const User = mongoose.model("User");
 
@@ -12,7 +12,7 @@ passport.use(
       password: "user[password]"
     },
     (email, password, done) => {
-			helpers.common.log(`#email: ${email}`, 'blue');
+      helpers.common.log(`#email: ${email}`, "blue");
       User.findOne({ email })
         .then(user => {
           if (!user || !user.validatePassword(password)) {

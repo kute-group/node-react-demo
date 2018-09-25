@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-import { PAGE_LIMIT } from '../../config.json';
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import { PAGE_LIMIT } from "../../config.json";
 
 const Schema = mongoose.Schema;
 
@@ -9,17 +9,17 @@ const userSchema = new Schema({
     type: String,
     unique: true,
     required: true,
-    trim: true,
+    trim: true
   },
   username: {
     type: String,
     unique: true,
     required: true,
-    trim: true,
+    trim: true
   },
   password: {
     type: String,
-    required: true,
+    required: true
   },
   gender: String,
   avatar: String,
@@ -27,21 +27,21 @@ const userSchema = new Schema({
   fullname: {
     type: String,
     required: false,
-    max: 100,
+    max: 100
   },
   birthday: {
     type: Date,
-    default: '',
+    default: "",
     trim: true,
-    required: false,
+    required: false
   },
-  createdBy: { type: Schema.ObjectId, ref: 'User' },
-  updatedBy: { type: Schema.ObjectId, ref: 'User' },
+  createdBy: { type: Schema.ObjectId, ref: "User" },
+  updatedBy: { type: Schema.ObjectId, ref: "User" },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
 });
 
-userSchema.pre('save', function(next) {
+userSchema.pre("save", function(next) {
   bcrypt.hash(this.password, 10, (err, hash) => {
     if (err) return next(err);
     this.password = hash;
@@ -49,10 +49,10 @@ userSchema.pre('save', function(next) {
   });
   if (!this.avatar) {
     switch (this.gender) {
-      case 'female':
-        this.avatar = 'female.png';
+      case "female":
+        this.avatar = "female.png";
       default:
-        this.avatar = 'male.png';
+        this.avatar = "male.png";
     }
   }
   next();
@@ -78,7 +78,7 @@ userSchema.statics = {
     return row;
   },
   load(_id) {
-    if (!_id) throw new Error('Id is not found');
+    if (!_id) throw new Error("Id is not found");
     return this.findOne({ _id }).exec();
   },
   list(options) {
@@ -90,8 +90,8 @@ userSchema.statics = {
       .skip(limit * page)
       .limit(parseInt(limit))
       .exec();
-  },
+  }
 };
 
 // export the model
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);
