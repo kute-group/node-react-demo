@@ -4,12 +4,45 @@ const Schema = mongoose.Schema;
 
 let productSchema = new Schema({
   name: { type: String, required: true, max: 100 },
-	price: { type: String, required: true },
-	createdBy: { type: Schema.ObjectId, ref: 'User' },
-	updatedBy: { type: Schema.ObjectId, ref: 'User' },
-	createdAt: { type: Date, default: Date.now },
-	updatedAt: { type: Date, default: Date.now }
+  price: { type: String, required: true },
+  reviews: [
+    {
+      content: {
+        type: String,
+        default: '',
+        trim: true
+      },
+      createdBy: {
+        type: Schema.ObjectId,
+        ref: 'User'
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ],
+  createdBy: { type: Schema.ObjectId, ref: 'User' },
+  updatedBy: { type: Schema.ObjectId, ref: 'User' },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
 });
+
+productSchema.methods = {
+  createReview: function(user, content) {
+    this.reviews.push({
+      content,
+      createdBy: user._id
+    });
+    return this.save();
+  },
+  removeReview: function(reviewId) {
+    const index = this.reviews.map(review => review.id).indexOf(reviewId);
+    if (~index) this.reviews.splice(index, 1);
+    else throw new Error('Review not found');
+    return this.save();
+  }
+};
 
 productSchema.statics = {
   updateById: function(id, body) {
