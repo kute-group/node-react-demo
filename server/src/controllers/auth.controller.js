@@ -1,123 +1,94 @@
 import { Router } from 'express';
-import passport from 'passport';
+import jsonwebtoken from 'jsonwebtoken';
 import User from '../models/user.model';
-
-// const jwt = require('jsonwebtoken');
+import helpers from '../helpers';
 const auth = require('../helpers/auth');
+const { SECRET, JWT_EXPIRATATION } = require('../../config.json');
 
 const api = Router();
-// var LocalStrategy = require('passport-local').Strategy;
-// passport.use(
-//   new LocalStrategy(function(username, password, done) {
-//     User.findOne({ username: username }, function(err, user) {
-//       if (err) {
-//         return done(err);
-//       }
-//       if (!user) {
-//         return done(null, false);
-//       }
-
-//       User.authenticate(password, user.password, result => {
-//         if (!result) {
-//           return done(null, false, { message: 'Invalid password' });
-//         }
-//         return done(null, user, { message: 'Logged in Successfully' });
-//       });
-//     });
-//   })
-// );
-// passport.serializeUser(function(user, done) {
-//   done(null, user._id);
-// });
-
-// passport.deserializeUser(function(id, done) {
-//   User.findById(id, function(err, user) {
-//     done(err, user);
-//   });
-// });
-
-// api.post(
-//   '/login',
-//   passport.authenticate('local', { failureRedirect: '/login' }),
-//   (req, res) => {
-// 		const token = jwt.sign({ user : req.user },'top_secret');
-//     res.send({
-// 			token,
-// 			user: req.user
-// 		});
-//   }
-// );
-
-api.get('/logout', (req, res) => {
+api.get('/logout', auth.optional, (req, res) => {
   req.logout();
   res.send(null);
 });
 
 api.post('/login', auth.optional, (req, res, next) => {
   if (req.body.email && req.body.password) {
-    return passport.authenticate(
-      'local',
-      { session: false },
-      (err, passportUser, info) => {
-        if (err) {
-          console.log(err);
-          return next(err);
+    helpers.common.log('start to log in...', 'green');
+    User.findOne({ email: req.body.email })
+      .then(user => {
+        if (!user) {
+          res
+            .status(400)
+            .send({
+              message: 'Can not find user to login',
+            })
+            .end();
+        } else {
+          User.compare(user.password, req.body.password, function(result) {
+            if (result) {
+              helpers.common.log(
+                `login with email: ${req.body.email}`,
+                'green',
+              );
+              jsonwebtoken.sign(
+                { email: user.email, id: user._id, username: user.username },
+                SECRET,
+                {
+                  algorithm: 'HS256',
+                  expiresIn: JWT_EXPIRATATION,
+                },
+                (err, token) => {
+                  if (err)
+                    return res
+                      .status(400)
+                      .send({
+                        err,
+                      })
+                      .end();
+                  return res.status(200).send({
+                    user,
+                    token,
+                  });
+                },
+              );
+            } else {
+              res
+                .status(400)
+                .send({
+                  message: 'Password is not correct.',
+                })
+                .end();
+            }
+          });
         }
-
-        if (passportUser) {
-          const user = passportUser;
-          user.token = passportUser.generateJWT();
-
-          return res.json({ user: user.toAuthJSON() });
-        }
-
-        return res.status(400).send(info);
-      },
-    )(req, res, next);
-
-    // User.findOne({ email: req.body.email }).then(user => {
-    //   if (!user) {
-    //     return res
-    //       .status(400)
-    //       .send({
-    //         message: 'login failed'
-    //       })
-    //       .end();
-    //   } else {
-    //     // User.authenticate(req.body.password, user.password, result => {
-    //     //   if (!result) {
-    //     //     return res
-    //     //       .status(400)
-    //     //       .send({
-    //     //         message: 'wrong password.'
-    //     //       })
-    //     //       .end();
-    //     //   }
-    //     //   const token = jwt.sign({ user }, 'top_secret');
-    //     //   res
-    //     //     .status(200)
-    //     //     .send({ user, token })
-    //     //     .end();
-    //     // });
-
-    //   }
-    // });
+      })
+      .catch(err => {
+        res
+          .status(400)
+          .send({
+            message: 'Can not find user to login.',
+          })
+          .end();
+      });
+  } else {
+    res
+      .status(400)
+      .send({
+        message: 'Email and password are required.',
+      })
+      .end();
   }
-  res
-    .status(400)
-    .send('Email and password are required.')
-    .end();
 });
-api.post('/register', (req, res, next) => {
+api.post('/register', auth.optional, (req, res, next) => {
   // confirm that user typed same password twice
   if (req.body.password !== req.body.passwordConf) {
     return res.status(500).send('Password do not match.');
   }
   if (
-    req.body.username
-    && req.body.email
-    && req.body.password
-    && req.body.passwordConf
+    req.body.username &&
+    req.body.email &&
+    req.body.password &&
+    req.body.passwordConf
   ) {
     const userData = {
       email: req.body.email,

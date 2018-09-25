@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Product from '../models/product.model';
 import helpers from '../helpers';
 import { PAGE_LIMIT } from '../../config.json';
-
+const auth = require('../helpers/auth');
 const api = Router();
 
 // get product and add to req
@@ -16,7 +16,7 @@ api.param('id', async (req, res, next, id) => {
   }
 });
 // get products list
-api.get('/', async (req, res) => {
+api.get('/', auth.required, async (req, res) => {
   const { page, limit } = req.query;
   const options = {
     limit: limit || PAGE_LIMIT,
@@ -37,7 +37,7 @@ api.get('/', async (req, res) => {
 });
 
 // get one product by id
-api.get('/:id', async (req, res) => {
+api.get('/:id', auth.required, async (req, res) => {
   const { id } = req.params;
   try {
     let product = await Product.load({ _id: id });
@@ -52,7 +52,7 @@ api.get('/:id', async (req, res) => {
 });
 
 // create new product
-api.post('/', (req, res, next) => {
+api.post('/', auth.required, (req, res, next) => {
   const product = new Product({
     name: req.body.name,
     createdBy: req.body.createdBy,
@@ -68,7 +68,7 @@ api.post('/', (req, res, next) => {
 });
 
 // update a product
-api.put('/:id', async (req, res) => {
+api.put('/:id', auth.required, async (req, res) => {
   const { id } = req.params;
   const body = {
     name: req.body.name,
@@ -90,7 +90,7 @@ api.put('/:id', async (req, res) => {
 });
 
 // delete a product
-api.delete('/:id', async (req, res) => {
+api.delete('/:id', auth.required, async (req, res) => {
   const { id } = req.params;
   try {
     await Product.deleteById(id);
@@ -111,7 +111,7 @@ reviews
 
 // add new a review
 // todo: get user from req
-api.post('/:id/review', async (req, res) => {
+api.post('/:id/review', auth.required, async (req, res) => {
   const user = {
     createdAt: '2018-09-25T02:55:39.395Z',
     updatedAt: '2018-09-25T02:55:39.396Z',
@@ -142,7 +142,7 @@ api.post('/:id/review', async (req, res) => {
 });
 
 // delete a review
-api.delete('/:id/review/:reviewId', async (req, res) => {
+api.delete('/:id/review/:reviewId', auth.required, async (req, res) => {
   const {
     params: { reviewId },
     product,

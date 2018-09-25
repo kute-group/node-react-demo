@@ -6,18 +6,21 @@ import { PAGE_LIMIT } from '../../config.json';
 const auth = require('../helpers/auth');
 
 const api = Router();
-api.get('/me', auth.required, (req, res) => {
-  User.findById(req.user._id)
-    .then(user => res.json(user))
-    .catch(err =>
-      res.status(400).send({
-        message: err,
-      }),
-    );
+api.get('/me', auth.required, async (req, res) => {
+  try {
+    let user = await User.load({ _id: req.payload.id });
+    user = User.format(user);
+    res.status(200).send(user);
+  } catch (err) {
+    res.status(501).send({
+      status: 'failed',
+      message: `Can not get user id = ${req.payload.id}`,
+    });
+  }
 });
 
 // get users list
-api.get('/', async (req, res) => {
+api.get('/', auth.required, async (req, res) => {
   const { page, limit } = req.query;
   const options = {
     limit: limit || PAGE_LIMIT,
@@ -36,7 +39,7 @@ api.get('/', async (req, res) => {
     }),
   );
 });
-api.post('/', (req, res, next) => {
+api.post('/', auth.required, (req, res, next) => {
   // confirm that user typed same password twice
   if (req.body.password !== req.body.passwordConf) {
     return res.status(500).send('Password do not match.');
