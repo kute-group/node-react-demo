@@ -4,10 +4,11 @@ import { PAGE_LIMIT } from "../../config.json";
 const Schema = mongoose.Schema;
 
 const chatSchema = new Schema({
+	nickname: { type: String, required: true },
   content: { type: String, required: true },
   createdBy: { type: Schema.ObjectId, ref: "User" },
   updatedBy: { type: Schema.ObjectId, ref: "User" },
-  createdAt: { type: Date, default: '' },
+  createdAt: { type: Date, default: Date.now  },
   updatedAt: { type: Date, default: Date.now }
 });
 
@@ -26,15 +27,14 @@ chatSchema.statics = {
     return row;
   },
   load(_id) {
-    return this.findOne({ _id })
-      .exec();
+    return this.findOne({ _id }).exec();
   },
   list(options) {
     const criteria = options.criteria || {};
     const page = options.page < 0 ? 0 : options.page;
     const limit = options.limit < 0 ? PAGE_LIMIT : options.limit;
     return this.find(criteria)
-      .sort({ createAt: -1 })
+      .sort({ createdAt: -1 })
       .skip(limit * page)
       .limit(parseInt(limit))
       .exec();
@@ -42,4 +42,4 @@ chatSchema.statics = {
 };
 
 // export the model
-module.exports = mongoose.model("Product", chatSchema);
+module.exports = mongoose.model("Chat", chatSchema);

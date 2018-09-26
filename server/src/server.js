@@ -61,8 +61,10 @@ const server = app.listen(PORT, () => {
   helpers.common.log(`Server is running at port: ${PORT}`, 'blue');
 });
 
-// chat real time
+// connect to socket io
 const io = socket(server);
+global.io = io;
 io.on('connection', socket => {
-  console.log(socket.id);
+  helpers.common.log(`Socket is running... id = ${socket.id}`, 'green');
 });
+
