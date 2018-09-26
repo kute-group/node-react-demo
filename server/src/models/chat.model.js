@@ -4,11 +4,11 @@ import { PAGE_LIMIT } from "../../config.json";
 const Schema = mongoose.Schema;
 
 const chatSchema = new Schema({
-	nickname: { type: String, required: true },
+  nickname: { type: String, required: true },
   content: { type: String, required: true },
   createdBy: { type: Schema.ObjectId, ref: "User" },
   updatedBy: { type: Schema.ObjectId, ref: "User" },
-  createdAt: { type: Date, default: Date.now  },
+  createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
 
