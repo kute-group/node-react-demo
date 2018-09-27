@@ -80,29 +80,46 @@ api.post("/login", auth.optional, (req, res, next) => {
   }
 });
 api.post("/register", auth.optional, (req, res, next) => {
-  // confirm that user typed same password twice
-  if (req.body.password !== req.body.passwordConf) {
-    return res.status(500).send("Password do not match.");
-  }
   if (
     req.body.username &&
     req.body.email &&
     req.body.password &&
     req.body.passwordConf
   ) {
+    // confirm that user typed same password twice
+    if (req.body.password !== req.body.passwordConf) {
+      return res.status(500).send({
+        status: "failed",
+        message: "Password do not match."
+      });
+    }
     const userData = {
       email: req.body.email,
       username: req.body.username,
+      fullname: req.body.fullname,
       password: req.body.password,
       passwordConf: req.body.passwordConf
     };
     const user = new User(userData);
     user.save((err, u) => {
-      if (err) return next(u);
-      return res.status(200).send(u);
+      if (err) {
+        if (err.code === 11000)
+          return res.status(500).send({
+            status: "failed",
+            message: "E-mail is duplicated."
+          });
+        else return res.status(500).send(err);
+      }
+      return res.status(200).send({
+        status: "success",
+        user: u
+      });
     });
   } else {
-    res.status(500).send("Can not save data");
+    res.status(500).send({
+      status: "failed",
+      message: "Required fields are empty."
+    });
   }
   return false;
 });
