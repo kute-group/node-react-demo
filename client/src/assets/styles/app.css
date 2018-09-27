@@ -1,0 +1,132 @@
+body {
+}
+.wrap {
+  width: 1200px;
+  margin: auto;
+}
+@keyframes app-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid blue;
+  border-right: 16px solid green;
+  border-bottom: 16px solid red;
+  border-left: 16px solid pink;
+  width: 100px;
+  height: 100px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+/*
+	Style for header
+*/
+.header {
+  background-color: #222;
+  padding: 20px;
+  color: white;
+  padding-bottom: 40px;
+}
+.header .logo {
+  text-align: center;
+}
+.header .logo img {
+  animation: app-logo-spin infinite 20s linear;
+  height: 80px;
+}
+.header .main-menu {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  padding-top: 10px;
+}
+.header .main-menu li {
+  list-style: none;
+  display: inline-block;
+}
+.header .main-menu li a {
+  color: #fff;
+  font-size: 16px;
+  padding: 6px 15px;
+  margin: 0 15px;
+  border-radius: 8px;
+  border: 2px solid #25ecea;
+  background: #25ecea;
+}
+.header .main-menu li a.active {
+  background: #f60;
+}
+/*
+	Style for main
+*/
+.main {
+  min-height: 500px;
+  margin: 25px 0;
+}
+.auth-page {
+  padding: 10px;
+  margin: auto;
+  width: 400px;
+  position: relative;
+}
+.auth-page h2 {
+  text-align: center;
+  text-transform: uppercase;
+}
+.auth-page .btn {
+  margin: 0 10px 0 0;
+}
+.auth-page .loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #fff;
+  opacity: 0.5;
+	z-index: 999;
+	padding-top: 20%;
+}
+.auth-page .loading .loader{
+	margin: auto;
+	line-height: 100%;
+}
+.auth-page .form-group {
+  position: relative;
+}
+.auth-page .form-group input {
+  padding-right: 35px;
+}
+.auth-page .form-group i {
+  position: absolute;
+  right: 10px;
+  font-size: 18px;
+  top: 33px;
+  cursor: pointer;
+}
+
+/*
+	Style for footer
+*/
+.footer {
+  background: #222;
+  padding: 20px;
+  text-align: center;
+  color: #fff;
+}
