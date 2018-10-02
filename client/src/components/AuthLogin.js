@@ -18,7 +18,7 @@ export default class AuthLogin extends Component {
       <div>
         <div className="form-group">
           <label>Email</label>
-          <input placeholder="E-mail" type="text" className="form-control" />
+          <input onChange={()=>this.props} placeholder="E-mail" type="text" className="form-control" />
         </div>
         <div className="form-group">
           <label>Password</label>
