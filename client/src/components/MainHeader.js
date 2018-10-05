@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
 import { images } from '../assets/images';
@@ -11,10 +10,6 @@ export default class MainHeader extends Component {
       tab: 'LOGIN',
     };
   }
-  static propTypes = {
-    prop: PropTypes,
-  };
-
   render() {
     return (
       <header className="header">

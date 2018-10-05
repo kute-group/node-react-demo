@@ -43,7 +43,7 @@ class Chat extends React.Component {
       nickname: this.state.nickname,
       content: this.state.message,
     };
-    const posted = await helpers.post(`${API}/chat`, body);
+    await helpers.post(`${API}/chat`, body);
     this.setState({ message: '' });
   }
 

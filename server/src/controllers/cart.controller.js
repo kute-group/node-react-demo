@@ -16,7 +16,7 @@ api.param("id", async (req, res, next, id) => {
   }
 });
 // get products list
-api.get("/", auth.optional, async (req, res) => {
+api.get("/", auth.required, async (req, res) => {
   const { page, limit } = req.query;
   const options = {
     limit: limit || PAGE_LIMIT,
@@ -52,15 +52,11 @@ api.get("/:id", auth.required, async (req, res) => {
 });
 
 // create new product
-api.post("/", auth.optional, (req, res, next) => {
-	console.log('req', req.body);
+api.post("/", auth.required, (req, res, next) => {
   const product = new Product({
-		name: req.body.name,
-		description: req.body.description,
-		content: req.body.content,
-    price: req.body.price,
-		category: req.body.category,
+    name: req.body.name,
     createdBy: req.body.createdBy,
+    price: req.body.price
   });
   product.save(err => {
     if (err) return next(err);
@@ -72,12 +68,10 @@ api.post("/", auth.optional, (req, res, next) => {
 });
 
 // update a product
-api.put("/:id", auth.optional, async (req, res) => {
+api.put("/:id", auth.required, async (req, res) => {
   const { id } = req.params;
   const body = {
-		name: req.body.name,
-		description: req.body.description,
-		content: req.body.content,
+    name: req.body.name,
     updatedBy: req.body.updatedBy,
     price: req.body.price
   };

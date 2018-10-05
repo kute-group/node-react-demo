@@ -5,6 +5,7 @@ import AuthRegister from './AuthRegister';
 import AuthButtons from './AuthButtons';
 import helpers from '../helpers';
 import { API } from '../config.json';
+import { withRouter } from 'react-router-dom';
 
 class AuthPage extends Component {
   constructor(props) {
@@ -29,31 +30,60 @@ class AuthPage extends Component {
   }
   async onSubmit() {
     this.setState({ loading: true });
-    const body = {
-      email: this.state.forms.email,
-      username: this.state.forms.email,
-      fullname: this.state.forms.fullname,
-      password: this.state.forms.password,
-      passwordConf: this.state.forms.repassword,
-    };
-    const result = await helpers.post(`${API}/auth/register`, body);
-    if (result && result.status && result.status === 'success') {
-      setTimeout(() => {
-        this.fireNotification({
-          message: 'Notification message',
-          level: 'success',
-        });
-        this.setState({ forms: {}, tab: 'LOGIN', loading: false });
-      }, 1000);
-    } else {
-			console.log('resultxxxxx', result);
-      setTimeout(() => {
-        this.fireNotification({
-          message: `Error: ${result && result.message ? result.message : ''}`,
-          level: 'error',
-        });
-        this.setState({ loading: false });
-      }, 1000);
+    console.log(this.state);
+    const { tab } = this.state;
+    if (tab === 'REGISTER') {
+      const body = {
+        email: this.state.forms.email,
+        username: this.state.forms.email,
+        fullname: this.state.forms.fullname,
+        password: this.state.forms.password,
+        passwordConf: this.state.forms.repassword,
+      };
+      const result = await helpers.post(`${API}/auth/register`, body);
+      if (result && result.status && result.status === 'success') {
+        setTimeout(() => {
+          this.fireNotification({
+            message: 'Notification message',
+            level: 'success',
+          });
+          this.setState({ forms: {}, tab: 'LOGIN', loading: false });
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          this.fireNotification({
+            message: `Error: ${result && result.message ? result.message : ''}`,
+            level: 'error',
+          });
+          this.setState({ loading: false });
+        }, 1000);
+      }
+    } else if (tab === 'LOGIN') {
+      const body = {
+        email: this.state.forms.email,
+        password: this.state.forms.password,
+      };
+      const result = await helpers.post(`${API}/auth/login`, body);
+      if (result && result.status && result.status === 'success') {
+        setTimeout(() => {
+          this.fireNotification({
+            message: 'Notification message',
+            level: 'success',
+					});
+					localStorage.setItem('token',result.token);
+					localStorage.setItem('user',JSON.stringify(result.user));
+					this.setState({ forms: {}, loading: false });
+					this.props.history.push('/')
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          this.fireNotification({
+            message: `Error: ${result && result.message ? result.message : ''}`,
+            level: 'error',
+          });
+          this.setState({ loading: false });
+        }, 1000);
+      }
     }
   }
   onReset() {
@@ -83,7 +113,6 @@ class AuthPage extends Component {
         title = 'Login Form';
         break;
     }
-    console.log(this.state.forms);
     return (
       <div className="auth-page">
         <h2 onClick={this._addNotification}>{title}</h2>
@@ -119,4 +148,4 @@ class AuthPage extends Component {
   }
 }
 
-export default AuthPage;
+export default withRouter(AuthPage);

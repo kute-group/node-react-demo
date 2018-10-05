@@ -39,7 +39,7 @@ api.get("/", auth.required, async (req, res) => {
     })
   );
 });
-api.post("/", auth.required, (req, res, next) => {
+api.post("/", auth.optional, (req, res, next) => {
   // confirm that user typed same password twice
   if (req.body.password !== req.body.passwordConf) {
     return res.status(500).send("Password do not match.");

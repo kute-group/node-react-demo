@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 export default class AuthRegister extends Component {
   constructor(props) {
@@ -8,13 +7,9 @@ export default class AuthRegister extends Component {
       showPassword: false,
     };
   }
-  static propTypes = {
-    prop: PropTypes,
-  };
 
   render() {
 		const { showPassword } = this.state;
-		console.log(this.props)
     return (
       <div>
         <div className="form-group">

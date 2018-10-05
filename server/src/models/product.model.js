@@ -1,48 +1,51 @@
-import mongoose from "mongoose";
-import { PAGE_LIMIT } from "../../config.json";
+import mongoose from 'mongoose';
+import { PAGE_LIMIT } from '../../config.json';
 
 const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
   name: { type: String, required: true, max: 100 },
-  price: { type: String, required: true },
+	price: { type: String, required: true },
+	description: String,
+	content: String,
   reviews: [
     {
       content: {
         type: String,
-        default: "",
-        trim: true
+        default: '',
+        trim: true,
       },
       createdBy: {
         type: Schema.ObjectId,
-        ref: "User"
+        ref: 'User',
       },
       createdAt: {
         type: Date,
-        default: Date.now
-      }
-    }
+        default: Date.now,
+      },
+    },
   ],
-  createdBy: { type: Schema.ObjectId, ref: "User" },
-  updatedBy: { type: Schema.ObjectId, ref: "User" },
+  category: [{ type: Schema.ObjectId, ref: 'ProductCat' }],
+  createdBy: { type: Schema.ObjectId, ref: 'User' },
+  updatedBy: { type: Schema.ObjectId, ref: 'User' },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
 });
 
 productSchema.methods = {
   createReview(user, content) {
     this.reviews.push({
       content,
-      createdBy: user._id
+      createdBy: user._id,
     });
     return this.save();
   },
   removeReview(reviewId) {
     const index = this.reviews.map(review => review.id).indexOf(reviewId);
     if (~index) this.reviews.splice(index, 1);
-    else throw new Error("Review not found");
+    else throw new Error('Review not found');
     return this.save();
-  }
+  },
 };
 
 productSchema.statics = {
@@ -61,7 +64,7 @@ productSchema.statics = {
   },
   load(_id) {
     return this.findOne({ _id })
-      .populate("user", "name email username")
+      .populate('user', 'name email username')
       .exec();
   },
   list(options) {
@@ -69,13 +72,14 @@ productSchema.statics = {
     const page = options.page < 0 ? 0 : options.page;
     const limit = options.limit < 0 ? PAGE_LIMIT : options.limit;
     return this.find(criteria)
-      .populate("user", " name username")
-      .sort({ createAt: -1 })
+			.populate('user', ' name username')
+			.populate('category', 'name _id')
+      .sort({ createdAt: -1 })
       .skip(limit * page)
       .limit(parseInt(limit))
       .exec();
-  }
+  },
 };
 
 // export the model
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model('Product', productSchema);

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 export default class AuthLogin extends Component {
   constructor(props) {
@@ -8,21 +7,26 @@ export default class AuthLogin extends Component {
       showPassword: false,
     };
   }
-  static propTypes = {
-    prop: PropTypes,
-  };
 
   render() {
-		const { showPassword } = this.state;
+    const { showPassword } = this.state;
     return (
       <div>
         <div className="form-group">
           <label>Email</label>
-          <input onChange={()=>this.props} placeholder="E-mail" type="text" className="form-control" />
+          <input
+            value={this.props.forms.email || ''}
+            onChange={value => this.props.changeInputs(value, 'email')}
+            placeholder="E-mail"
+            type="text"
+            className="form-control"
+          />
         </div>
         <div className="form-group">
           <label>Password</label>
           <input
+            value={this.props.forms.password || ''}
+            onChange={value => this.props.changeInputs(value, 'password')}
             placeholder="Password"
             type={showPassword ? 'text' : 'password'}
             className="form-control"

@@ -53,6 +53,7 @@ app.use("/api/v1", routers);
 
 // handle errors
 app.use((err, req, res, next) => {
+	console.log('err', err);
   res.status(err.status || 500);
   res.json({ error: err });
 });

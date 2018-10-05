@@ -47,7 +47,9 @@ api.post("/login", auth.optional, (req, res, next) => {
                       .end();
                   return res.status(200).send({
                     user,
-                    token
+										token,
+										status: "success",
+										message: "login successfully",
                   });
                 }
               );
@@ -55,6 +57,7 @@ api.post("/login", auth.optional, (req, res, next) => {
               res
                 .status(400)
                 .send({
+									status: "failed",
                   message: "Password is not correct."
                 })
                 .end();
@@ -66,6 +69,7 @@ api.post("/login", auth.optional, (req, res, next) => {
         res
           .status(400)
           .send({
+						status: "failed",
             message: "Can not find user to login."
           })
           .end();
@@ -74,6 +78,7 @@ api.post("/login", auth.optional, (req, res, next) => {
     res
       .status(400)
       .send({
+				status: "failed",
         message: "Email and password are required."
       })
       .end();
