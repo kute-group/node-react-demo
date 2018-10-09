@@ -29,6 +29,11 @@ export default class MainHeader extends Component {
                 About
               </NavLink>
             </li>
+						<li>
+              <NavLink activeClassName="active" to="/product">
+                Product
+              </NavLink>
+            </li>
             <li>
               <NavLink activeClassName="active" to="/chat">
                 Chat

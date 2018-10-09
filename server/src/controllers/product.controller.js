@@ -37,7 +37,7 @@ api.get("/", auth.optional, async (req, res) => {
 });
 
 // get one product by id
-api.get("/:id", auth.required, async (req, res) => {
+api.get("/:id", auth.optional, async (req, res) => {
   const { id } = req.params;
   try {
     let product = await Product.load({ _id: id });
@@ -96,7 +96,7 @@ api.put("/:id", auth.optional, async (req, res) => {
 });
 
 // delete a product
-api.delete("/:id", auth.required, async (req, res) => {
+api.delete("/:id", auth.optional, async (req, res) => {
   const { id } = req.params;
   try {
     await Product.deleteById(id);
@@ -117,7 +117,7 @@ reviews
 
 // add new a review
 // todo: get user from req
-api.post("/:id/review", auth.required, async (req, res) => {
+api.post("/:id/review", auth.optional, async (req, res) => {
   const user = {
     createdAt: "2018-09-25T02:55:39.395Z",
     updatedAt: "2018-09-25T02:55:39.396Z",
@@ -148,7 +148,7 @@ api.post("/:id/review", auth.required, async (req, res) => {
 });
 
 // delete a review
-api.delete("/:id/review/:reviewId", auth.required, async (req, res) => {
+api.delete("/:id/review/:reviewId", auth.optional, async (req, res) => {
   const {
     params: { reviewId },
     product

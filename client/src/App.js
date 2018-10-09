@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './assets/styles/app.css';
+import './assets/styles/app.scss';
 import { MainFooter, MainHeader } from './components';
 class App extends Component {
 
